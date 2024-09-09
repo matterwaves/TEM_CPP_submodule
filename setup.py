@@ -8,9 +8,10 @@ setup(name='tem_cpp_submodule',
       ext_modules=[
           Extension('tem_cpp_submodule_native',
                    sources=[
-                       'tem_cpp_submodule_native/wrapper.pyx', 
-                       'tem_cpp_submodule_native/algs.cpp', 
-                       'tem_cpp_submodule_native/seperated_points.cpp'
+                        'tem_cpp_submodule_native/wrapper.pyx', 
+                        'tem_cpp_submodule_native/potential.cpp',
+                        'tem_cpp_submodule_native/solvent.cpp', 
+                        'tem_cpp_submodule_native/seperated_points.cpp'
                    ],
                    language='c++')
         ],

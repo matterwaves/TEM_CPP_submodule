@@ -200,7 +200,7 @@ public:
     }
 };
 
-void generate_seperated_points(float* out, int element_num, float bound0, float bound1, float bound2, float min_atom_separation) {
+void generate_seperated_points_extern(float* out, int element_num, float bound0, float bound1, float bound2, float min_atom_separation) {
     srand(time(NULL));
 
     KDTree* tree = new KDTree(out, element_num, min_atom_separation * min_atom_separation);

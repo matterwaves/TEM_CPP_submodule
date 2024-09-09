@@ -3,6 +3,8 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+tem_cpp_submodule_native/wrapper.cpp
+
 # C extensions
 *.so
 

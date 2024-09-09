@@ -1,0 +1,30 @@
+[build-system]
+requires = [
+    "setuptools>=61.0",
+    "wheel",
+    "Cython",
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tem_cpp_submodule"
+version = "0.0.1"
+authors = [
+  { name="Shahar Sandhaus", email="shahar.sandhaus@berkeley.edu" },
+]
+description = "A Python module for accelerating TEM simulations using C++"
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Development Status :: 2 - Pre-Alpha",
+]
+dependencies = [
+    "setuptools>=61.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/matterwaves/TEM_CPP_submodule"
+Issues = "https://github.com/matterwaves/TEM_CPP_submodule/issues"

@@ -1,1 +1,2 @@
 from .seperated_points import generate_seperated_points
+from .solvent import generate_solvent_potential

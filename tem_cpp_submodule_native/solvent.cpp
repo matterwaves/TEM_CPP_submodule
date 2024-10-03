@@ -3,20 +3,6 @@
 #include <cmath>
 #include <vector>
 
-// van der wals radii "dictionary"
-float vdw_dict[80] = {
-    -1.0,  1.1, -1.0, -1.0, -1.0, -1.0,  1.7, 1.55, 
-    1.52, -1.0, -1.0, 2.27, 1.73, -1.0, -1.0,  1.8, 
-     1.8, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 
-    -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 
-    -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 
-    -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 
-    -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 
-    -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 
-    -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 
-    -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 1.66
-};
-
 static int min_c(int a, int b) {
     if(a < b) return a;
     return b;
@@ -46,8 +32,11 @@ float ssdNonPolar(float rad_dist) {
  
 void generate_solvent_potential_extern(float* out_potential, int shape0, int shape1, int shape2, 
                       float* coords, void* proton_counts_raw, int atom_count, float r_asymptote,  
-                      float r_probe, float pixel_size_rc, float pixel_size_z)
+                      float r_probe, float pixel_size_rc, float pixel_size_z, float* vdw_dict, int vdw_dict_size,
+                      int print_progress)
 {
+    printf("Van der wall radius of atom 0: %f %d\n", vdw_dict[0], vdw_dict_size);
+
     // convert pointers (python doesn't like having pointers to non standard types)
     int32_t* proton_counts = (int32_t*)proton_counts_raw;
     
@@ -64,7 +53,7 @@ void generate_solvent_potential_extern(float* out_potential, int shape0, int sha
     for(int i = 0; i < atom_count; i++) {
         // Skip any atoms with proton counts that are negative or havier than gold
         int atom_id = proton_counts[i];
-        if(atom_id < 0 || atom_id > 79) continue;
+        if(atom_id < 0 || atom_id > vdw_dict_size - 1) continue;
 
         // `vdw_rad` is the actuall vad der walls radius of the atom
         float vdw_rad = vdw_dict[atom_id]; 
@@ -123,10 +112,11 @@ void generate_solvent_potential_extern(float* out_potential, int shape0, int sha
             }
         }
 
-        if(i % 10000 == 0) printf("\rAnalyzed %d/%d atoms", i, atom_count);
+        if(print_progress == 1 && i % 10000 == 0) printf("\rAnalyzed %d/%d atoms", i, atom_count);
     }
 
-    printf("\n");
+    if(print_progress == 1)
+        printf("\n");
 
     // define a custom Index3D type just for convenience
     struct Index3D{
@@ -172,7 +162,7 @@ void generate_solvent_potential_extern(float* out_potential, int shape0, int sha
 
         // Get atom id and check that it's within bounds
         int atom_id = proton_map[(ind0*shape1 + ind1)*shape2 + ind2];
-        if(atom_id < 1 || atom_id > 79) continue;
+        if(atom_id < 1 || atom_id > vdw_dict_size-1) continue;
 
         // Get van der wals radius, and skip if it isn't defined
         float vdw_rad = vdw_dict[atom_id];
@@ -217,11 +207,12 @@ void generate_solvent_potential_extern(float* out_potential, int shape0, int sha
             }
         }
 
-        if(i % 10000 == 0) printf("\rAnalyzed %d/%ld boundary points", i, boundary_inds.size());
+        if(print_progress == 1 && i % 10000 == 0) printf("\rAnalyzed %d/%ld boundary points", i, boundary_inds.size());
         i++;
     }
 
-    printf("\n");
+    if(print_progress == 1)
+        printf("\n");
 
     const int SAMPLES = 10000;
     float dist_range = r_asymptote - min_dist;
@@ -237,8 +228,10 @@ void generate_solvent_potential_extern(float* out_potential, int shape0, int sha
         polar_potential[i] = 3.6f * pixel_size_z * ssdPolar(i_dist);
         nonpolar_potential[i] = 3.6f * pixel_size_z * ssdNonPolar(i_dist);
     }
-
-    printf("Calculating final potential...");
+    
+    if(print_progress == 1)
+        printf("Calculating final potential...");
+    
     // Go through mask to find all boundary points
     for(int i0 = 0; i0 < shape0; i0++) {
         for(int i1 = 0; i1 < shape1; i1++) {
@@ -272,5 +265,6 @@ void generate_solvent_potential_extern(float* out_potential, int shape0, int sha
         }
     }
     
-    printf("done!\n");
+    if(print_progress == 1)
+        printf("done!\n");
 }

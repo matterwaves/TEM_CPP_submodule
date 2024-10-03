@@ -200,7 +200,7 @@ public:
     }
 };
 
-void generate_seperated_points_extern(float* out, int element_num, float bound0, float bound1, float bound2, float min_atom_separation) {
+void generate_seperated_points_extern(float* out, int element_num, float bound0, float bound1, float bound2, float min_atom_separation, int print_progress) {
     srand(time(NULL));
 
     KDTree* tree = new KDTree(out, element_num, min_atom_separation * min_atom_separation);
@@ -215,8 +215,9 @@ void generate_seperated_points_extern(float* out, int element_num, float bound0,
         if(!tree->addPoint(tempPos))
             i--;
         
-        if(i % 10000 == 0) printf("\rGenerated %d/%d positions", i, element_num);
+        if(print_progress == 1 && i % 10000 == 0) printf("\rGenerated %d/%d positions", i, element_num);
     }
 
-    printf("\n");
+    if(print_progress == 1)
+        printf("\n");
 }

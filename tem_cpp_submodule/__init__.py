@@ -1,2 +1,3 @@
 from .seperated_points import generate_seperated_points
-from .solvent import generate_solvent_potential
+from .solvent_potential import generate_solvent_potential
+from .protein_potential import generate_protein_potential

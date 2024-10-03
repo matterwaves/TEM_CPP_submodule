@@ -11,7 +11,8 @@ coords = np.array([
 
 proton_counts = np.array([6, 7, 8], dtype=np.uint32)
 
-solvent_potential = tem_cpp_submodule.generate_solvent_potential(
+
+solvent_potential = tem_cpp_submodule.generate_protein_potential(
     coords, 
     proton_counts, 
     (20, 20, 20), 1, 1

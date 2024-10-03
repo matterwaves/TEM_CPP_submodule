@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-struct arrayF3 {
+struct arrayF3_old {
     union {
         void* vbuff;
         float* fbuff;
@@ -13,9 +13,22 @@ struct arrayF3 {
     int shape2;
 };
 
-// void calc_pot(struct arrayF3 out_pot, float* coords, void* proton_counts, int atom_count,
-//               struct arrayF3 atom_pots, float pixel_size_rc, float pixel_size_z);
-   
+void calc_pot(
+    float* out_pot, 
+    int out_pot_shape0,
+    int out_pot_shape1,
+    int out_pot_shape2,
+    float* coords, 
+    void* proton_counts_raw, 
+    int atom_count,
+    float* atom_pots,
+    int atom_pots_shape0,
+    int atom_pots_shape1,
+    int atom_pots_shape2,
+    float pixel_size_rc,
+    float pixel_size_z,
+    int print_progress);
+
 void generate_solvent_potential_extern(float* out_potential, int shape0, int shape1, int shape2, 
                       float* coords, void* proton_counts_raw, int atom_count, float r_asymptote,  
                       float r_probe, float pixel_size_rc, float pixel_size_z, float* vdw_dict, int vdw_dict_size,

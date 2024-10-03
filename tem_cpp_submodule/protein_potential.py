@@ -192,22 +192,17 @@ def generate_atomic_potentials(pix_size_xy: float) -> np.ndarray:
     """
     Generates atomic potentials array.
     """
-    unique_potentials = {}
-    for proton_count in proton_count_dict.values():
-        unique_potentials.update({ proton_count: get_atomicPotential(proton_count, pix_size_xy) })
-    
-    # add pseudowater potential to library (for discrete solvent calculation)
-    unique_potentials.update({ 0: get_pseudowaterPotential(pix_size_xy) })
 
-    atom_pot_shape = (max(unique_potentials.keys()) + 1,
-                    *(next(iter(unique_potentials.values())).shape))
+    water_pot = get_pseudowaterPotential(pix_size_xy)
 
-    atom_pots = np.zeros(shape=atom_pot_shape)
+    atom_pots = np.zeros((params_list.shape[0], water_pot.shape[0], water_pot.shape[1]))
 
-    for kk in unique_potentials:
-        atom_pots[kk, :, :] = unique_potentials[kk]
+    for ii in range(params_list.shape[0]):
+        atom_pots[ii, :, :] = get_atomicPotential(ii, pix_size_xy)
 
     return atom_pots.astype(np.float32)
+
+atomic_potentials_cache = {}
 
 def generate_protein_potential(
         coords: np.ndarray, 
@@ -220,7 +215,10 @@ def generate_protein_potential(
     ) -> np.ndarray:
 
     if atom_potentials is None:
-        atom_potentials = generate_atomic_potentials(pix_size_xy)
+        if pix_size_xy not in atomic_potentials_cache:
+            atomic_potentials_cache[pix_size_xy] = generate_atomic_potentials(pix_size_xy)
+
+        atom_potentials = atomic_potentials_cache[pix_size_xy]
     
     assert coords.dtype == np.float32
     assert proton_counts.dtype == np.uint32
@@ -250,4 +248,4 @@ def generate_protein_potential(
         1 if print_progress else 0
     )
 
-    return np.frombuffer(potential_bytes, dtype=np.float32).reshape(potential_shape)
+    return np.copy(np.frombuffer(potential_bytes, dtype=np.float32).reshape(potential_shape))

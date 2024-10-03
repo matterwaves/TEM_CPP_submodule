@@ -38,7 +38,7 @@ def generate_protein_potential(
     cdef char* atom_pots_view = atom_pots
 
     calc_pot(<float*>out_view, pot_shape[0], pot_shape[1], pot_shape[2],
-             <float*>coords_view, <void*>proton_counts_view, len(proton_counts),
+             <float*>coords_view, <void*>proton_counts_view, len(proton_counts) // sizeof(int),
              <float*>atom_pots_view, atom_pots_shape[0], atom_pots_shape[1], atom_pots_shape[2],
              pixel_size_rc, pixel_size_z, print_progress)
     

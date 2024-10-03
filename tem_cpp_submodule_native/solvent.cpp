@@ -35,8 +35,6 @@ void generate_solvent_potential_extern(float* out_potential, int shape0, int sha
                       float r_probe, float pixel_size_rc, float pixel_size_z, float* vdw_dict, int vdw_dict_size,
                       int print_progress)
 {
-    printf("Van der wall radius of atom 0: %f %d\n", vdw_dict[0], vdw_dict_size);
-
     // convert pointers (python doesn't like having pointers to non standard types)
     int32_t* proton_counts = (int32_t*)proton_counts_raw;
     

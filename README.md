@@ -6,6 +6,6 @@ A collection of simple C++ algorithms made for fast TEM simulations.
 ```
 git clone https://github.com/matterwaves/TEM_CPP_submodule.git
 cd TEM_CPP_submodule
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 pip3 install .
 ```

@@ -23,7 +23,8 @@ classifiers = [
 ]
 dependencies = [
     "setuptools>=61.0",
-    "numpy"
+    "numpy",
+    "scipy"
 ]
 
 [project.urls]
